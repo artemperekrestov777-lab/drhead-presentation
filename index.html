@@ -1466,9 +1466,9 @@
                 steps[currentStep].classList.add('step-visible');
 
                 // Запускаем анимацию счётчиков для слайда 2
-                if (currentSlide === 2 && currentStep >= 0 && currentStep < 4) {
+                if (currentSlide === 2) {
                     const statItem = steps[currentStep];
-                    if (statItem.classList.contains('stat-item')) {
+                    if (statItem && statItem.classList.contains('stat-item')) {
                         const statNumber = statItem.querySelector('.stat-number[data-count]');
                         if (statNumber) {
                             const target = parseInt(statNumber.getAttribute('data-count'));
