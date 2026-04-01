@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Опрос eNPS Dr.Head 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0f1a;
+    --bg2: #111827;
+    --surface: #1a2235;
+    --surface2: #222d42;
+    --orange: #FF6B35;
+    --orange-soft: rgba(255,107,53,0.15);
+    --green: #22d3a0;
+    --green-soft: rgba(34,211,160,0.12);
+    --red: #f05a5a;
+    --red-soft: rgba(240,90,90,0.12);
+    --yellow: #fbbf24;
+    --yellow-soft: rgba(251,191,36,0.12);
+    --blue: #60a5fa;
+    --blue-soft: rgba(96,165,250,0.12);
+    --text: #f0f4ff;
+    --muted: #8896b3;
+    --border: rgba(255,255,255,0.07);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    user-select: none;
+  }
+
+  /* SLIDES WRAPPER */
+  .slides-container {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 72px 72px 110px;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.55s cubic-bezier(.4,0,.2,1), transform 0.55s cubic-bezier(.4,0,.2,1);
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .slide.active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: all;
+  }
+  .slide.exit {
+    opacity: 0;
+    transform: translateY(-40px);
+  }
+
+  /* NAV */
+  .nav {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    z-index: 100;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    padding: 10px 24px;
+    border-radius: 40px;
+    backdrop-filter: blur(12px);
+  }
+  .nav-btn {
+    width: 36px; height: 36px;
+    border: none;
+    background: var(--surface2);
+    color: var(--text);
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .nav-btn:hover { background: var(--orange); transform: scale(1.08); }
+  .nav-dots { display: flex; gap: 6px; }
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--surface2);
+    transition: all 0.3s;
+  }
+  .dot.active {
+    width: 22px;
+    border-radius: 3px;
+    background: var(--orange);
+  }
+  .slide-counter {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'Unbounded', sans-serif;
+    min-width: 42px;
+    text-align: right;
+  }
+
+  /* SLIDE NUMBER */
+  .slide-num {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 11px;
+    color: var(--orange);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .slide-num::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    max-width: 160px;
+  }
+
+  /* TYPOGRAPHY */
+  .display {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(28px, 3.5vw, 52px);
+    font-weight: 900;
+    line-height: 1.1;
+  }
+  .display .accent { color: var(--orange); }
+  .display.xl {
+    font-size: clamp(36px, 5vw, 72px);
+  }
+
+  h2 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(22px, 2.5vw, 36px);
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  h3 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(14px, 1.5vw, 20px);
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  p { font-size: clamp(13px, 1.1vw, 16px); line-height: 1.7; color: var(--muted); }
+  .big-num {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(40px, 5.5vw, 80px);
+    font-weight: 900;
+    line-height: 1;
+  }
+  .medium-num {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(28px, 3.2vw, 48px);
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 28px;
+  }
+  .card.highlight-orange { border-color: rgba(255,107,53,0.4); background: var(--orange-soft); }
+  .card.highlight-green { border-color: rgba(34,211,160,0.3); background: var(--green-soft); }
+  .card.highlight-red { border-color: rgba(240,90,90,0.35); background: var(--red-soft); }
+  .card.highlight-yellow { border-color: rgba(251,191,36,0.3); background: var(--yellow-soft); }
+  .card.highlight-blue { border-color: rgba(96,165,250,0.3); background: var(--blue-soft); }
+
+  /* GRID LAYOUTS */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+  .grid-1-2 { display: grid; grid-template-columns: 1fr 2fr; gap: 24px; }
+
+  /* TAGS */
+  .tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-family: 'Unbounded', sans-serif;
+  }
+  .tag-red { background: var(--red-soft); color: var(--red); border: 1px solid rgba(240,90,90,0.3); }
+  .tag-green { background: var(--green-soft); color: var(--green); border: 1px solid rgba(34,211,160,0.3); }
+  .tag-orange { background: var(--orange-soft); color: var(--orange); border: 1px solid rgba(255,107,53,0.3); }
+  .tag-yellow { background: var(--yellow-soft); color: var(--yellow); border: 1px solid rgba(251,191,36,0.3); }
+
+  /* SCORE BAR */
+  .score-bar-wrap { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+  .score-bar {
+    flex: 1;
+    height: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 1.2s cubic-bezier(.4,0,.2,1);
+    width: 0;
+  }
+  .score-val {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    min-width: 44px;
+    text-align: right;
+  }
+
+  /* ICON CIRCLE */
+  .icon-circle {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  /* BULLET LIST */
+  .bullet-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .bullet-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: clamp(12px, 1vw, 15px);
+    line-height: 1.5;
+    color: var(--text);
+    opacity: 0.85;
+  }
+  .bullet-list li::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--orange);
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+
+  /* QUOTE BLOCK */
+  .quote-block {
+    border-left: 3px solid var(--orange);
+    padding: 16px 20px;
+    background: var(--orange-soft);
+    border-radius: 0 12px 12px 0;
+  }
+  .quote-text {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(14px, 1.6vw, 22px);
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--text);
+  }
+
+  /* PRIORITY ITEM */
+  .priority-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    transition: border-color 0.2s;
+  }
+  .priority-num {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--orange);
+    min-width: 32px;
+    opacity: 0.3;
+  }
+  .priority-content h4 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(11px, 1.1vw, 15px);
+    font-weight: 700;
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+  .priority-content p { font-size: clamp(11px, 0.9vw, 13px); }
+
+  /* DECORATIVE LINES */
+  .deco-line {
+    position: absolute;
+    top: 0; right: 0;
+    width: 340px; height: 340px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,107,53,0.07);
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .deco-line:nth-child(2) {
+    width: 500px; height: 500px;
+    border-color: rgba(255,107,53,0.04);
+    top: -80px; right: -80px;
+  }
+
+  /* ============================
+     SLIDE 1: TITLE
+  ============================ */
+  #slide-1 {
+    justify-content: center;
+    background: radial-gradient(ellipse 70% 60% at 80% 50%, rgba(255,107,53,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 50% at 10% 80%, rgba(34,211,160,0.06) 0%, transparent 60%),
+                var(--bg);
+  }
+  .title-eyebrow {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 20px;
+  }
+  .title-sub {
+    font-size: clamp(14px, 1.3vw, 18px);
+    color: var(--muted);
+    margin-top: 20px;
+    max-width: 480px;
+    line-height: 1.6;
+  }
+  .title-meta {
+    position: absolute;
+    bottom: 100px;
+    left: 72px;
+    display: flex;
+    gap: 40px;
+  }
+  .title-meta-item { display: flex; flex-direction: column; gap: 4px; }
+  .title-meta-label { font-size: 11px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+  .title-meta-val {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .title-badge {
+    position: absolute;
+    top: 56px;
+    right: 72px;
+    background: var(--orange-soft);
+    border: 1px solid rgba(255,107,53,0.3);
+    border-radius: 12px;
+    padding: 10px 18px;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--orange);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .circle-deco {
+    position: absolute;
+    right: 72px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,107,53,0.12);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .circle-deco::before {
+    content: '';
+    position: absolute;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,107,53,0.18);
+  }
+  .circle-deco::after {
+    content: '';
+    position: absolute;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: var(--orange-soft);
+    border: 1px solid rgba(255,107,53,0.3);
+  }
+  .circle-text {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 38px;
+    font-weight: 900;
+    color: var(--orange);
+    z-index: 1;
+  }
+
+  /* ============================
+     UTILS
+  ============================ */
+  .flex-row { display: flex; align-items: center; gap: 12px; }
+  .flex-col { display: flex; flex-direction: column; gap: 8px; }
+  .mt-4 { margin-top: 4px; }
+  .mt-8 { margin-top: 8px; }
+  .mt-12 { margin-top: 12px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-24 { margin-top: 24px; }
+  .mb-4 { margin-bottom: 4px; }
+  .mb-8 { margin-bottom: 8px; }
+  .mb-16 { margin-bottom: 16px; }
+  .flex-1 { flex: 1; }
+  .text-center { text-align: center; }
+  .text-green { color: var(--green); }
+  .text-red { color: var(--red); }
+  .text-orange { color: var(--orange); }
+  .text-yellow { color: var(--yellow); }
+  .text-blue { color: var(--blue); }
+  .text-muted { color: var(--muted); }
+  .w-full { width: 100%; }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 16px 0;
+  }
+
+  /* ANIMATE IN */
+  .slide.active .card,
+  .slide.active .priority-item,
+  .slide.active .score-bar-fill {
+    animation: fadeUp 0.5s ease forwards;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .slide.active .score-bar-fill {
+    animation: none;
+  }
+
+  .kbd-hint {
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    opacity: 0.55;
+  }
+  .kbd {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 10px;
+    font-family: monospace;
+    color: var(--muted);
+  }
+  .fullscreen-btn {
+    width: 36px; height: 36px;
+    border: none;
+    background: var(--surface2);
+    color: var(--muted);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, color 0.2s, transform 0.15s;
+    flex-shrink: 0;
+  }
+  .fullscreen-btn:hover {
+    background: var(--orange);
+    color: #fff;
+    transform: scale(1.08);
+  }
+  .fullscreen-btn svg { width: 15px; height: 15px; }
+</style>
+</head>
+<body>
+
+<button class="fullscreen-btn" id="fsBtn" title="Развернуть на весь экран">
+  <svg id="fsIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/>
+    <path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>
+  </svg>
+</button>
+
+
+<div class="slides-container">
+
+  <!-- ======= SLIDE 1: TITLE ======= -->
+  <div class="slide active" id="slide-1">
+    <div class="title-badge">eNPS Survey 2026</div>
+    <div class="title-eyebrow">Dr. Head · Результаты опроса</div>
+    <div class="display xl">Опрос eNPS<br><span class="accent">Dr.Head</span><br>2026</div>
+    <div class="title-sub">Анализ вовлечённости и лояльности сотрудников. Выявление ключевых зон роста и рисков.</div>
+    <div class="title-meta">
+      <div class="title-meta-item">
+        <span class="title-meta-label">Период</span>
+        <span class="title-meta-val">2026</span>
+      </div>
+      <div class="title-meta-item">
+        <span class="title-meta-label">Формат</span>
+        <span class="title-meta-val">Внутренний опрос</span>
+      </div>
+      <div class="title-meta-item">
+        <span class="title-meta-label">Метрика</span>
+        <span class="title-meta-val">eNPS</span>
+      </div>
+    </div>
+    <div class="circle-deco">
+      <span class="circle-text">eNPS</span>
+    </div>
+  </div>
+
+  <!-- ======= SLIDE 2: EXECUTIVE SUMMARY ======= -->
+  <div class="slide" id="slide-2">
+    <div class="slide-num">01 · Общая картина</div>
+    <div class="grid-1-2" style="flex:1; gap:32px;">
+      <div class="flex-col" style="justify-content:center; gap:20px;">
+        <h2>Executive<br>Summary</h2>
+        <div class="quote-block">
+          <div class="quote-text">Высокий уровень лояльности, но с критическими зонами риска</div>
+        </div>
+        <p>Большинство сотрудников позитивно оценивают атмосферу, руководство и миссию компании. Однако карьерная перспектива остаётся болевой точкой.</p>
+        <div class="tag tag-orange" style="width:fit-content;">Средние оценки: 8.3 – 8.8 / 10</div>
+      </div>
+      <div class="flex-col" style="gap:12px;">
+        <div class="card highlight-green" style="flex:1;">
+          <div class="flex-row mb-8">
+            <div class="icon-circle" style="background:var(--green-soft); font-size:18px;">💚</div>
+            <span class="tag tag-green">Сильные стороны</span>
+          </div>
+          <ul class="bullet-list mt-8">
+            <li>Культура и атмосфера в команде</li>
+            <li>Отношения с руководителем</li>
+            <li>Миссия и гордость за компанию</li>
+          </ul>
+        </div>
+        <div class="card highlight-red" style="flex:1;">
+          <div class="flex-row mb-8">
+            <div class="icon-circle" style="background:var(--red-soft); font-size:18px;">🔴</div>
+            <span class="tag tag-red">Главные провалы</span>
+          </div>
+          <ul class="bullet-list mt-8">
+            <li>Карьерные перспективы и развитие</li>
+            <li>Самореализация в работе</li>
+            <li>Ощущение «потолка»</li>
+          </ul>
+        </div>
+        <div class="card highlight-orange" style="padding:16px 20px;">
+          <div class="flex-row">
+            <div class="icon-circle" style="background:var(--orange-soft); font-size:18px;">👁</div>
+            <div>
+              <div style="font-family:'Unbounded',sans-serif; font-size:12px; font-weight:700; color:var(--orange);">Ключевой вывод</div>
+              <div style="font-size:13px; color:var(--text); margin-top:4px; line-height:1.4;">Люди <strong>«любят компанию»</strong>, но не понимают своего будущего в ней</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======= SLIDE 3: RISK ZONES ======= -->
+  <div class="slide" id="slide-3">
+    <div class="slide-num">02 · Зоны риска</div>
+    <h2 class="mb-16">Что нужно срочно<br>исправить <span class="text-red">⚠️</span></h2>
+    <div class="grid-3" style="flex:1; align-content:start;">
+
+      <div class="card highlight-red flex-col" style="gap:16px;">
+        <div class="flex-row">
+          <span class="tag tag-red">🔴 Критично</span>
+        </div>
+        <div>
+          <div style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; font-family:'Unbounded',sans-serif; margin-bottom:4px;">Карьерный трек</div>
+          <div class="big-num text-red">6.25<span style="font-size:24px; color:var(--muted);">/10</span></div>
+          <div style="font-size:11px; color:var(--red); margin-top:4px; font-weight:600;">— Худший показатель</div>
+        </div>
+        <div class="score-bar-wrap">
+          <div class="score-bar">
+            <div class="score-bar-fill" style="background: var(--red);" data-width="62.5%"></div>
+          </div>
+        </div>
+        <ul class="bullet-list">
+          <li>Нет прозрачных карьерных треков</li>
+          <li>Непонятно, как расти</li>
+          <li>Ощущение «потолка»</li>
+        </ul>
+        <div class="divider"></div>
+        <div style="font-size:12px; color:var(--red); font-weight:600;">Риск: уход сильных сотрудников</div>
+      </div>
+
+      <div class="card highlight-yellow flex-col" style="gap:16px;">
+        <div class="flex-row">
+          <span class="tag tag-yellow">🟠 Важно</span>
+        </div>
+        <div>
+          <div style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; font-family:'Unbounded',sans-serif; margin-bottom:4px;">Самореализация</div>
+          <div class="big-num text-yellow">7.07<span style="font-size:24px; color:var(--muted);">/10</span></div>
+          <div style="font-size:11px; color:var(--yellow); margin-top:4px; font-weight:600;">Профразвитие: 7.10 / 10</div>
+        </div>
+        <div class="score-bar-wrap">
+          <div class="score-bar">
+            <div class="score-bar-fill" style="background: var(--yellow);" data-width="70.7%"></div>
+          </div>
+        </div>
+        <ul class="bullet-list">
+          <li>Работа воспринимается как функциональная, не развивающая</li>
+          <li>Недостаток вызова и роста</li>
+        </ul>
+        <div class="divider"></div>
+        <div style="font-size:12px; color:var(--yellow); font-weight:600;">Риск: выгорание, «тихий» поиск работы</div>
+      </div>
+
+      <div class="card highlight-blue flex-col" style="gap:16px;">
+        <div class="flex-row">
+          <span class="tag" style="background:var(--blue-soft); color:var(--blue); border:1px solid rgba(96,165,250,0.3);">🟡 Сигнал</span>
+        </div>
+        <div>
+          <div style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; font-family:'Unbounded',sans-serif; margin-bottom:4px;">Интерес к работе</div>
+          <div class="big-num text-blue">8.12<span style="font-size:24px; color:var(--muted);">/10</span></div>
+          <div style="font-size:11px; color:var(--blue); margin-top:4px; font-weight:600;">Ниже общей «температуры»</div>
+        </div>
+        <div class="score-bar-wrap">
+          <div class="score-bar">
+            <div class="score-bar-fill" style="background: var(--blue);" data-width="81.2%"></div>
+          </div>
+        </div>
+        <ul class="bullet-list">
+          <li>Часть сотрудников не вовлечена</li>
+          <li>Работа не всегда даёт «драйв»</li>
+        </ul>
+        <div class="divider"></div>
+        <div style="font-size:12px; color:var(--blue); font-weight:600;">Сигнал для мониторинга</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======= SLIDE 4: STRENGTHS ======= -->
+  <div class="slide" id="slide-4">
+    <div class="slide-num">03 · Сильные стороны</div>
+    <h2 class="mb-16">Что важно<br>сохранить <span class="text-green">✅</span></h2>
+    <div class="grid-3" style="flex:1; align-content:start; gap:16px;">
+
+      <div class="card highlight-green flex-col" style="gap:14px;">
+        <div class="flex-row">
+          <div class="icon-circle" style="background:var(--green-soft); font-size:22px;">🌿</div>
+          <div>
+            <h3 class="text-green">Культура и атмосфера</h3>
+            <div style="font-size:11px; color:var(--muted); margin-top:2px;">Очень сильный актив компании</div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="flex-col" style="gap:10px;">
+          <div>
+            <div class="flex-row" style="justify-content:space-between; margin-bottom:4px;">
+              <span style="font-size:12px; color:var(--muted);">Дружелюбие</span>
+              <span class="score-val text-green">8.55</span>
+            </div>
+            <div class="score-bar"><div class="score-bar-fill" style="background:var(--green);" data-width="85.5%"></div></div>
+          </div>
+          <div>
+            <div class="flex-row" style="justify-content:space-between; margin-bottom:4px;">
+              <span style="font-size:12px; color:var(--muted);">Уважение</span>
+              <span class="score-val text-green">8.8+</span>
+            </div>
+            <div class="score-bar"><div class="score-bar-fill" style="background:var(--green);" data-width="88%"></div></div>
+          </div>
+          <div>
+            <div class="flex-row" style="justify-content:space-between; margin-bottom:4px;">
+              <span style="font-size:12px; color:var(--muted);">Конфликты</span>
+              <span style="font-size:12px; color:var(--green); font-weight:600;">управляемые</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card highlight-green flex-col" style="gap:14px;">
+        <div class="flex-row">
+          <div class="icon-circle" style="background:var(--green-soft); font-size:22px;">🤝</div>
+          <div>
+            <h3 class="text-green">Отношения с руководителем</h3>
+            <div style="font-size:11px; color:var(--muted); margin-top:2px;">Поддерживающие, не токсичные</div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="flex-col" style="gap:10px;">
+          <div>
+            <div class="flex-row" style="justify-content:space-between; margin-bottom:4px;">
+              <span style="font-size:12px; color:var(--muted);">Справедливость</span>
+              <span class="score-val text-green">8.4</span>
+            </div>
+            <div class="score-bar"><div class="score-bar-fill" style="background:var(--green);" data-width="84%"></div></div>
+          </div>
+          <div>
+            <div class="flex-row" style="justify-content:space-between; margin-bottom:4px;">
+              <span style="font-size:12px; color:var(--muted);">Поддержка</span>
+              <span class="score-val text-green">8.3</span>
+            </div>
+            <div class="score-bar"><div class="score-bar-fill" style="background:var(--green);" data-width="83%"></div></div>
+          </div>
+          <div>
+            <div class="flex-row" style="justify-content:space-between; margin-bottom:4px;">
+              <span style="font-size:12px; color:var(--muted);">Обратная связь</span>
+              <span class="score-val text-green">8.4</span>
+            </div>
+            <div class="score-bar"><div class="score-bar-fill" style="background:var(--green);" data-width="84%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card highlight-green flex-col" style="gap:14px;">
+        <div class="flex-row">
+          <div class="icon-circle" style="background:var(--green-soft); font-size:22px;">⭐</div>
+          <div>
+            <h3 class="text-green">Миссия и гордость</h3>
+            <div style="font-size:11px; color:var(--muted); margin-top:2px;">Люди верят в компанию</div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="flex-col" style="gap:10px;">
+          <div>
+            <div class="flex-row" style="justify-content:space-between; margin-bottom:4px;">
+              <span style="font-size:12px; color:var(--muted);">Миссия компании</span>
+              <span class="score-val text-green">8.83</span>
+            </div>
+            <div class="score-bar"><div class="score-bar-fill" style="background:var(--green);" data-width="88.3%"></div></div>
+          </div>
+          <div>
+            <div class="flex-row" style="justify-content:space-between; margin-bottom:4px;">
+              <span style="font-size:12px; color:var(--muted);">Гордость</span>
+              <span class="score-val text-green">8.5</span>
+            </div>
+            <div class="score-bar"><div class="score-bar-fill" style="background:var(--green);" data-width="85%"></div></div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div style="background:var(--green-soft); border-radius:8px; padding:10px 14px; font-size:12px; color:var(--green); font-weight:600; line-height:1.4;">
+          Сотрудники верят в компанию и её миссию — это фундамент для роста
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======= SLIDE 5: DIAGNOSIS ======= -->
+  <div class="slide" id="slide-5">
+    <div class="slide-num">04 · Глубинный диагноз</div>
+    <div class="grid-2" style="flex:1; gap:32px; align-items:center;">
+      <div class="flex-col" style="gap:24px; justify-content:center;">
+        <h2>Ключевая<br>мысль</h2>
+        <div class="quote-block">
+          <div class="quote-text">«Хорошее место работать, но не место строить карьеру»</div>
+        </div>
+        <p style="font-size:15px; line-height:1.8;">Это главный диагноз, который важно донести руководству. Компания создала сильную базу — культуру, отношения, миссию. Но не выстроила систему, которая показывает сотруднику его будущее.</p>
+        <div class="flex-row" style="gap:10px; flex-wrap:wrap;">
+          <span class="tag tag-green">Культура ✓</span>
+          <span class="tag tag-green">Миссия ✓</span>
+          <span class="tag tag-green">Атмосфера ✓</span>
+          <span class="tag tag-red">Карьера ✗</span>
+          <span class="tag tag-red">Развитие ✗</span>
+        </div>
+      </div>
+      <div class="flex-col" style="gap:16px;">
+        <div class="card" style="text-align:center; padding:32px 24px;">
+          <div style="font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; font-family:'Unbounded',sans-serif; margin-bottom:12px;">Текущее состояние</div>
+          <div style="display:flex; justify-content:center; gap:32px; margin-bottom:16px;">
+            <div class="flex-col" style="align-items:center; gap:4px;">
+              <div class="medium-num text-green">8.8</div>
+              <div style="font-size:11px; color:var(--muted);">Культура</div>
+            </div>
+            <div style="width:1px; background:var(--border);"></div>
+            <div class="flex-col" style="align-items:center; gap:4px;">
+              <div class="medium-num text-red">6.25</div>
+              <div style="font-size:11px; color:var(--muted);">Карьера</div>
+            </div>
+          </div>
+          <div style="height:2px; background:linear-gradient(90deg, var(--green), var(--red)); border-radius:1px; margin: 0 20px 12px;"></div>
+          <div style="font-size:12px; color:var(--muted);">Разрыв между культурой и карьерными возможностями — <span style="color:var(--red); font-weight:600;">2.55 балла</span></div>
+        </div>
+        <div class="card highlight-orange">
+          <h3 class="text-orange mb-8">Риски бездействия</h3>
+          <ul class="bullet-list">
+            <li>Уход сильных и амбициозных сотрудников</li>
+            <li>Демотивация тех, кто хочет расти</li>
+            <li>«Тихий» поиск работы у лучших кадров</li>
+            <li>Потеря конкурентоспособности как работодателя</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======= SLIDE 6: RECOMMENDATIONS PART 1 ======= -->
+  <div class="slide" id="slide-6">
+    <div class="slide-num">05 · Рекомендации</div>
+    <h2 class="mb-16">Что делать: <span class="text-orange">5 приоритетов</span></h2>
+    <div style="display:flex; flex-direction:column; gap:12px; flex:1;">
+
+      <div class="priority-item">
+        <div class="priority-num">01</div>
+        <div class="priority-content flex-1">
+          <div class="flex-row" style="margin-bottom:6px;">
+            <h4>🔥 Карьерные треки — критично</h4>
+            <span class="tag tag-red" style="margin-left:auto;">Приоритет 1</span>
+          </div>
+          <p>Прозрачные карьерные лестницы по ролям: уровни (junior → senior → lead), требования, вилки зарплат. <strong style="color:var(--orange);">Быстрый эффект: рост мотивации + снижение текучки</strong></p>
+        </div>
+      </div>
+
+      <div class="priority-item">
+        <div class="priority-num">02</div>
+        <div class="priority-content flex-1">
+          <div class="flex-row" style="margin-bottom:6px;">
+            <h4>🔥 Система развития</h4>
+            <span class="tag tag-red" style="margin-left:auto;">Приоритет 2</span>
+          </div>
+          <p>Индивидуальные планы развития (IDP), карьерные диалоги раз в 6 месяцев, обучение (внутреннее/внешнее). <strong style="color:var(--orange);">Важно: не просто обучение, а связка с реальным ростом</strong></p>
+        </div>
+      </div>
+
+      <div class="priority-item">
+        <div class="priority-num">03</div>
+        <div class="priority-content flex-1">
+          <div class="flex-row" style="margin-bottom:6px;">
+            <h4>🔥 Усиление роли руководителей</h4>
+            <span class="tag tag-red" style="margin-left:auto;">Приоритет 3</span>
+          </div>
+          <p>Обучение руководителей: как развивать сотрудников, как вести карьерные диалоги. KPI на развитие команды.</p>
+        </div>
+      </div>
+
+      <div class="priority-item">
+        <div class="priority-num">04</div>
+        <div class="priority-content flex-1">
+          <div class="flex-row" style="margin-bottom:6px;">
+            <h4>🟡 Работа с интересом к работе</h4>
+            <span class="tag tag-yellow" style="margin-left:auto;">Приоритет 4</span>
+          </div>
+          <p>Пересборка ролей (больше ответственности), участие в проектах, больше автономии.</p>
+        </div>
+      </div>
+
+      <div class="priority-item">
+        <div class="priority-num">05</div>
+        <div class="priority-content flex-1">
+          <div class="flex-row" style="margin-bottom:6px;">
+            <h4>🟡 Коммуникация будущего компании</h4>
+            <span class="tag tag-yellow" style="margin-left:auto;">Приоритет 5</span>
+          </div>
+          <p>Миссия понятна — но путь сотрудника в этой миссии нет. <strong style="color:var(--orange);">Показать: «как человек растёт внутри миссии»</strong></p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======= SLIDE 7: KEY MESSAGES ======= -->
+  <div class="slide" id="slide-7">
+    <div class="slide-num">06 · Что важно подчеркнуть на встрече</div>
+    <div class="grid-2" style="flex:1; gap:24px; align-items:start;">
+      <div class="flex-col" style="gap:16px;">
+        <h2>Сигналы<br>для руководства</h2>
+        <div class="card highlight-green">
+          <div class="flex-row mb-8">
+            <div class="icon-circle" style="background:var(--green-soft); font-size:18px;">✅</div>
+            <h3 class="text-green">У нас сильная база</h3>
+          </div>
+          <ul class="bullet-list">
+            <li>Культура и атмосфера — конкурентное преимущество</li>
+            <li>Руководители поддерживающие и адекватные</li>
+            <li>Сотрудники верят в миссию компании</li>
+          </ul>
+        </div>
+        <div class="card highlight-red">
+          <div class="flex-row mb-8">
+            <div class="icon-circle" style="background:var(--red-soft); font-size:18px;">⚠️</div>
+            <h3 class="text-red">Есть реальный риск</h3>
+          </div>
+          <ul class="bullet-list">
+            <li>Потерять амбициозных сотрудников</li>
+            <li>Главная проблема — непонятное будущее внутри компании</li>
+          </ul>
+        </div>
+      </div>
+      <div class="flex-col" style="gap:16px;">
+        <div class="card" style="padding:32px; text-align:center;">
+          <div style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; font-family:'Unbounded',sans-serif; margin-bottom:16px;">Срочность</div>
+          <div style="display:flex; gap:16px; justify-content:center;">
+            <div class="flex-col" style="align-items:center; gap:6px;">
+              <div style="width:70px; height:70px; border-radius:50%; background:var(--red-soft); border:2px solid var(--red); display:flex; align-items:center; justify-content:center; font-family:'Unbounded',sans-serif; font-size:22px; font-weight:900; color:var(--red);">3</div>
+              <div style="font-size:11px; color:var(--muted); text-align:center;">Критичных<br>проблемы</div>
+            </div>
+            <div class="flex-col" style="align-items:center; gap:6px;">
+              <div style="width:70px; height:70px; border-radius:50%; background:var(--yellow-soft); border:2px solid var(--yellow); display:flex; align-items:center; justify-content:center; font-family:'Unbounded',sans-serif; font-size:22px; font-weight:900; color:var(--yellow);">5</div>
+              <div style="font-size:11px; color:var(--muted); text-align:center;">Приоритетов<br>действий</div>
+            </div>
+            <div class="flex-col" style="align-items:center; gap:6px;">
+              <div style="width:70px; height:70px; border-radius:50%; background:var(--green-soft); border:2px solid var(--green); display:flex; align-items:center; justify-content:center; font-family:'Unbounded',sans-serif; font-size:22px; font-weight:900; color:var(--green);">3</div>
+              <div style="font-size:11px; color:var(--muted); text-align:center;">Сильных<br>актива</div>
+            </div>
+          </div>
+        </div>
+        <div class="card highlight-orange" style="padding:28px;">
+          <div style="font-size:11px; color:var(--orange); text-transform:uppercase; letter-spacing:0.1em; font-family:'Unbounded',sans-serif; margin-bottom:10px;">Главный вопрос к команде</div>
+          <div style="font-family:'Unbounded',sans-serif; font-size:clamp(13px,1.4vw,18px); font-weight:700; line-height:1.4; color:var(--text);">Как мы поможем каждому сотруднику увидеть своё будущее в Dr.Head?</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======= SLIDE 8: CONCLUSION ======= -->
+  <div class="slide" id="slide-8">
+    <div class="slide-num">07 · Итог</div>
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; gap:32px; max-width:800px; margin:0 auto;">
+      <h2 style="font-size:clamp(20px,2.8vw,42px);">Итоговый вывод</h2>
+      <div class="quote-block" style="border-radius:12px; border-left:none; border:2px solid rgba(255,107,53,0.4); padding:28px 36px;">
+        <div class="quote-text" style="font-size:clamp(15px,1.8vw,24px); line-height:1.5;">
+          Компания воспринимается как комфортное и приятное место работы,
+          но уступает в ключевом факторе удержания —
+          <span class="text-orange">понятном и достижимом карьерном росте</span>
+        </div>
+      </div>
+      <div class="grid-3" style="width:100%; gap:16px;">
+        <div class="card flex-col" style="gap:8px; align-items:center; padding:20px;">
+          <div style="font-size:28px;">🏗️</div>
+          <div style="font-family:'Unbounded',sans-serif; font-size:12px; font-weight:700; color:var(--orange);">Немедленно</div>
+          <div style="font-size:12px; color:var(--muted); text-align:center;">Разработать карьерные треки</div>
+        </div>
+        <div class="card flex-col" style="gap:8px; align-items:center; padding:20px;">
+          <div style="font-size:28px;">📈</div>
+          <div style="font-family:'Unbounded',sans-serif; font-size:12px; font-weight:700; color:var(--yellow);">В ближайшие месяцы</div>
+          <div style="font-size:12px; color:var(--muted); text-align:center;">Внедрить IDP и карьерные диалоги</div>
+        </div>
+        <div class="card flex-col" style="gap:8px; align-items:center; padding:20px;">
+          <div style="font-size:28px;">🎯</div>
+          <div style="font-family:'Unbounded',sans-serif; font-size:12px; font-weight:700; color:var(--green);">Постоянно</div>
+          <div style="font-size:12px; color:var(--muted); text-align:center;">Коммуницировать будущее компании</div>
+        </div>
+      </div>
+      <div style="font-size:13px; color:var(--muted);">Dr.Head · eNPS Survey 2026</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- NAVIGATION -->
+<div class="nav">
+  <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">&#8592;</button>
+  <div class="nav-dots" id="navDots"></div>
+  <span class="slide-counter" id="slideCounter">1 / 8</span>
+  <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">&#8594;</button>
+</div>
+
+<script>
+  const totalSlides = 8;
+  let current = 1;
+  let animating = false;
+
+  // Build dots
+  const dotsContainer = document.getElementById('navDots');
+  for (let i = 1; i <= totalSlides; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i === 1 ? ' active' : '');
+    dot.onclick = () => goTo(i);
+    dot.style.cursor = 'pointer';
+    dotsContainer.appendChild(dot);
+  }
+
+  function animateBars(slide) {
+    const fills = slide.querySelectorAll('.score-bar-fill');
+    fills.forEach(fill => {
+      const target = fill.getAttribute('data-width');
+      fill.style.width = '0';
+      setTimeout(() => { fill.style.width = target; }, 100);
+    });
+  }
+
+  function goTo(n) {
+    if (animating || n === current) return;
+    animating = true;
+
+    const prev = document.getElementById('slide-' + current);
+    const next = document.getElementById('slide-' + n);
+
+    prev.classList.remove('active');
+    prev.classList.add('exit');
+
+    setTimeout(() => {
+      prev.classList.remove('exit');
+    }, 550);
+
+    next.classList.add('active');
+    animateBars(next);
+
+    current = n;
+    updateUI();
+    setTimeout(() => { animating = false; }, 600);
+  }
+
+  function changeSlide(dir) {
+    const n = current + dir;
+    if (n < 1 || n > totalSlides) return;
+    goTo(n);
+  }
+
+  function updateUI() {
+    document.getElementById('slideCounter').textContent = current + ' / ' + totalSlides;
+    document.querySelectorAll('.dot').forEach((d, i) => {
+      d.classList.toggle('active', i + 1 === current);
+    });
+  }
+
+  // Keyboard
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') changeSlide(-1);
+  });
+
+  // Animate bars on first slide that is active
+  animateBars(document.getElementById('slide-1'));
+  // Fullscreen
+  const fsBtn = document.getElementById('fsBtn');
+  const fsIconExpand = '<path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>';
+  const fsIconCollapse = '<path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/>';
+
+  function updateFsIcon() {
+    const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    document.getElementById('fsIcon').innerHTML = isFs ? fsIconCollapse : fsIconExpand;
+    fsBtn.title = isFs ? 'Выйти из полного экрана' : 'Развернуть на весь экран';
+  }
+
+  fsBtn.addEventListener('click', () => {
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+      (document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen).call(document.documentElement);
+    } else {
+      (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    }
+  });
+
+  document.addEventListener('fullscreenchange', updateFsIcon);
+  document.addEventListener('webkitfullscreenchange', updateFsIcon);
+
+</script>
+</body>
+</html>
